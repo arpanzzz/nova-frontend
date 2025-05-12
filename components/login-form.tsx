@@ -1,17 +1,15 @@
-"use client"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import { toast } from "sonner"
-import { useRouter } from 'next/navigation'
-
+"use client";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 // Define the API call function
 const loginRequest = async (credentials: { EmpNo: string; password: string; location: string }) => {
-  
   const response = await fetch("http://localhost:4000/login", {
     method: "POST",
     headers: {
@@ -40,48 +38,54 @@ const loginRequest = async (credentials: { EmpNo: string; password: string; loca
     sessionStorage.setItem("EmpName", JSON.stringify(data.empname)); // Save user data
     sessionStorage.setItem("EmpCompID", JSON.stringify(data.EmpCompID)); // Save user data
     sessionStorage.setItem("role", JSON.stringify(data.role));
-    console.log("local storage ",sessionStorage.getItem("token")); 
+    console.log("local storage ", sessionStorage.getItem("token"));
   } else {
     throw new Error("Token not found in response");
   }
   return data;
 };
 
-
-
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const router = useRouter(); 
+  const router = useRouter();
   const [EmpNo, setEmpNo] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  // UseEffect to redirect if already logged in
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      router.push("/protectedpages/asset-transfer");
+    }
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent page reload
 
-    const location = "Bangalore"; // You can later make this dynamic
+    const location = "Bangalore"; // This could be dynamic if needed
 
-  try {
-    const data = await loginRequest({ EmpNo, password, location });
-    await router.push("/protectedpages/asset-transfer");
-    // console.log(data);
-  } catch (error: any) {
-    if (error.message === "Unauthorized") {
-      toast.error("Invalid credentials. Please try again.");
-    } else {
-      toast.error("Something went wrong. Try again later.");
+    setIsLoading(true); // Set loading state
+
+    try {
+      const data = await loginRequest({ EmpNo, password, location });
+      // Redirect after successful login
+      await router.push("/protectedpages/asset-transfer");
+    } catch (error: any) {
+      if (error.message === "Unauthorized") {
+        toast.error("Invalid credentials. Please try again.");
+      } else {
+        toast.error("Something went wrong. Try again later.");
+      }
+    } finally {
+      setIsLoading(false); // Reset loading state
     }
-    // console.error("Login failed:", error);
-  }
-
-
-    // If login is successful, redirect to the dashboard
-    
   };
 
   return (
-    <div className={cn("flex flex-col gap-6 ", className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form onSubmit={handleSubmit} className="p-6 md:p-8">
@@ -93,7 +97,7 @@ export function LoginForm({
                 </p>
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="EmpNo">Employee Number</Label>
                 <Input
                   id="EmpNo"
                   type="text"
@@ -105,26 +109,18 @@ export function LoginForm({
               <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  {/* <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
-                  >
-                    Forgot your password?
-                  </a> */}
                 </div>
-                <Input 
-                  id="password" 
-                  type="password" 
+                <Input
+                  id="password"
+                  type="password"
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
-                  required 
+                  required
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Login
-                {/* {isLoading ? "Logging in..." : "Login"} */}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Logging in..." : "Login"}
               </Button>
-              
             </div>
           </form>
           <div className="bg-muted relative hidden md:block">
