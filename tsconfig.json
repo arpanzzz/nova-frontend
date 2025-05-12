@@ -20,8 +20,19 @@
     ],
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "typeRoots": ["node_modules/@types", "./types"],  // Custom types support
+    "skipDefaultLibCheck": true, // Skip checking default library files
+    "noImplicitAny": false, // Allow 'any' types for certain cases like error handling
+    "ignoreDeprecations": "5.0" // Ignore certain deprecations if needed
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -1,0 +1,47 @@
+[
+  {
+    "ID": 1,
+    "from": "HR Dept",
+    "to": "Main Office",
+    "device id": "DEV-3417",
+    "device type": "Scanner",
+    "transfer type": "Service",
+    "Remarks": "Faulty unit"
+  },
+  {
+    "ID": 2,
+    "from": "Cloud Migration",
+    "to": "Client Z",
+    "device id": "DEV-3042",
+    "device type": "Scanner",
+    "transfer type": "External",
+    "Remarks": "Network upgrade"
+  },
+  {
+    "ID": 3,
+    "from": "Support Center",
+    "to": "Branch C",
+    "device id": "DEV-8315",
+    "device type": "Router",
+    "transfer type": "Return",
+    "Remarks": "Annual audit"
+  },
+  {
+    "ID": 4,
+    "from": "Store 5",
+    "to": "Warehouse A",
+    "device id": "DEV-5866",
+    "device type": "Scanner",
+    "transfer type": "Decommission",
+    "Remarks": "Migration complete"
+  },
+  {
+    "ID": 5,
+    "from": "HR Dept",
+    "to": "Head Office",
+    "device id": "DEV-1600",
+    "device type": "Scanner",
+    "transfer type": "Internal",
+    "Remarks": "Network upgrade"
+  }
+]
