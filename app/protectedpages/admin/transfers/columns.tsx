@@ -15,6 +15,8 @@ import {
 import { Input } from "@/components/ui/input"
 import Cookies from "js-cookie"
 import { toast } from "sonner"
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 
 export type Transfer = {
   RecID: number
@@ -147,7 +149,7 @@ export const getTransferColumns = (): ColumnDef<Transfer>[] => [
           console.log("Sending approval request...");
       
           const res = await fetch(
-            `http://localhost:4000/transfer-asset-function/approve-by-admin/${transfer.TransferCode?.trim() ?? ""}`,
+            `${apiUrl}/transfer-asset-function/approve-by-admin/${transfer.TransferCode?.trim() ?? ""}`,
             {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },

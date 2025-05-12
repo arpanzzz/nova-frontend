@@ -1,7 +1,6 @@
 import AssetTransferTable from '../../../components/asset-transfer-table';
 import TransferAssetForm from "@/components/transfer-asset-form"
 import IncomingTransfer from "@/components/incoming-transfers"
-import { Toaster } from "sonner"; // ✅ Import this
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 

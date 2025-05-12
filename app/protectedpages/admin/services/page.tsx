@@ -6,7 +6,7 @@ import { DataTable } from "./data-table";
 import IssueRegisterModal from "./dialog-box"; // Modal for editing issues
 import Cookies from "js-cookie"; // Ensure this package is installed
 import CreateNewEntry from "./create-new-entry-section";
-import AddAssetForm from "@/components/add-asset-form";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function DemoPage() {
   const [data, setData] = useState<Issue[]>([]);
@@ -40,7 +40,7 @@ export default function DemoPage() {
 
       console.log("Using Filters:", filters);
 
-      const response = await fetch("http://localhost:4000/manage-services/get-filtered-actions", {
+      const response = await fetch(`${apiUrl}/manage-services/get-filtered-actions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

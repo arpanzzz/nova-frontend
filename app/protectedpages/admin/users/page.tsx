@@ -5,10 +5,11 @@ import { getColumns, EmpData } from "./columns";
 import { DataTable } from "./data-table";
 import IssueRegisterModal from "./dialog-box"; // Modal for editing issues
 import Cookies from "js-cookie"; // Ensure this package is installed
-import IssueRegisterSection from "./issue-register-section";
+import CreateNewUser from "./create-new-user-section";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function DemoPage() {
-  const [data, setData] = useState<Issue[]>([]);
+  const [data, setData] = useState<EmpData[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterVersion, setFilterVersion] = useState(0);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -39,7 +40,7 @@ export default function DemoPage() {
 
       console.log("Using Filters:", filters);
 
-      const response = await fetch("http://localhost:4000/manage-user/get-filtered-users", {
+      const response = await fetch(`${apiUrl}/manage-user/get-filtered-users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -121,7 +122,7 @@ export default function DemoPage() {
   return (
   
     <div className="container px-16 w-full mx-auto py-10 flex flex-col ">
-      <IssueRegisterSection  />
+      <CreateNewUser  />
       <DataTable columns={getColumns()} data={data} />
       <IssueRegisterModal  open={isModalOpen} onOpenChange={setModalOpen} />
       <IssueRegisterModal  open={isAddModalOpen} onOpenChange={setAddModalOpen} />

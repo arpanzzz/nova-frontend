@@ -1,6 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import  UpdateUserForm  from "./update-user";
-import { NewIssueForm } from "./new-issue-form";
 import Cookies from "js-cookie"; // Ensure this package is installed
 
 // Helper to get cookie value
@@ -31,7 +30,6 @@ export default function IssueRegisterModal({
     >
       {/* <div className="w-[75vw] overflow-y-auto max-h-[75vh] max-w-none custom-scrollbar px-1"> */}
       {modalType === 'edit' && <UpdateUserForm  />}
-      {modalType === 'add' && <NewIssueForm />}
       {/* </div> */}
     </DialogContent>
   </Dialog>

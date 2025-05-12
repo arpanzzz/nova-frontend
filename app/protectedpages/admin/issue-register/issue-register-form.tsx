@@ -9,6 +9,9 @@ import { Command, CommandInput, CommandItem, CommandList } from "@/components/ui
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner"
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+
 interface Employee {
   EmpNo: string;
   EmpName: string;
@@ -61,11 +64,11 @@ export function IssueForm() {
   const [openEmpPopover, setOpenEmpPopover] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:4000/utils/get-employees")
+    fetch(`${apiUrl}/utils/get-employees`)
       .then((res) => res.json())
       .then((data) => setEmployees(data));
 
-    fetch("http://localhost:4000/utils/get-companies")
+    fetch(`${apiUrl}/utils/get-companies`)
       .then((res) => res.json())
       .then((data) => setCompanies(data));
   }, []);
@@ -107,9 +110,8 @@ export function IssueForm() {
       if (!token) {
         return toast("You need to be logged in to update the issue record.");
       }
-
-      console.log(`http://localhost:4000/manage-issue-register/update-issue/${IssuedID}`); // Log the data being sent to the server
-      const response = await fetch(`http://localhost:4000/manage-issue-register/update-issue/${IssuedID}`, {
+// Log the data being sent to the server
+      const response = await fetch(`${apiUrl}/manage-issue-register/update-issue/${IssuedID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

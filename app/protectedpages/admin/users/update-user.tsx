@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Cookies from 'js-cookie';
 import { toast } from "sonner"
-
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 type UserFormValues = {
   EmpNo: string | null;
@@ -53,7 +53,7 @@ const UpdateUserForm = () => {
     }
   
     try {
-      const response = await fetch(`http://localhost:4000/manage-user/update-user/${empNo}`, {
+      const response = await fetch(`${apiUrl}/manage-user/update-user/${empNo}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

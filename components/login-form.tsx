@@ -8,9 +8,12 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+
 // Define the API call function
 const loginRequest = async (credentials: { EmpNo: string; password: string; location: string }) => {
-  const response = await fetch("http://localhost:4000/login", {
+  const response = await fetch(`${apiUrl}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

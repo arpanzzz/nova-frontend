@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import Cookies from "js-cookie"
 import { toast } from "sonner"
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
 export type Issue = {
@@ -202,7 +203,7 @@ export const getColumns = (
   className="text-red-500"
   onClick={async () => {
     try {
-      const response = await fetch(`http://localhost:4000/manage-issue-register/return/${issue.AssetCode}`, {
+      const response = await fetch(`${apiUrl}/manage-issue-register/return/${issue.AssetCode}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

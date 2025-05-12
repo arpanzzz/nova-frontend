@@ -6,6 +6,8 @@ import { DataTable } from "./data-table";
 import IssueRegisterModal from "./dialog-box"; // Modal for editing issues
 import Cookies from "js-cookie"; // Ensure this package is installed
 import AddAssetForm from "@/components/add-asset-form";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 
 export default function DemoPage() {
   const [data, setData] = useState<AssetIssue[]>([]);
@@ -39,7 +41,7 @@ export default function DemoPage() {
 
       console.log("Using Filters:", filters);
 
-      const response = await fetch("http://localhost:4000/manage-asset/get-filtered-assets", {
+      const response = await fetch(`${apiUrl}/manage-asset/get-filtered-assets`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

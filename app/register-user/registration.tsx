@@ -16,6 +16,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 type Company = {
   CompCode: string
   CompName: string
@@ -41,7 +43,7 @@ export default function RegisterForm({
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const res = await fetch("http://localhost:4000/utils/get-companies")
+        const res = await fetch(`${apiUrl}/utils/get-companies`)
         const data = await res.json()
         setCompanies(data)
       } catch (err) {

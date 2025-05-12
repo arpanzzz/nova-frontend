@@ -12,6 +12,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+
 export default function AddAssetForm({ onRefresh }: { onRefresh?: () => void }) {
   const [showForm, setShowForm] = useState(false)
 
@@ -66,7 +69,7 @@ export default function AddAssetForm({ onRefresh }: { onRefresh?: () => void }) 
     const token = sessionStorage.getItem("token")
 
     try {
-      const res = await fetch("http://localhost:4000/manage-asset/add-asset", {
+      const res = await fetch(`${apiUrl}/manage-asset/add-asset`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

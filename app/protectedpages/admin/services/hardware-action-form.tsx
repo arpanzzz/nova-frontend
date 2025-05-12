@@ -19,6 +19,9 @@ type HardwareActionFormValues = {
   Remarks: string | null;
 };
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+
 const HardwareActionForm = () => {
   const modalType = Cookies.get('modalType'); // 'add' or 'edit'
   const cookieData = Cookies.get('selected');
@@ -69,10 +72,10 @@ const HardwareActionForm = () => {
         toast.error('Missing Action ID');
         return;
       }
-      url = `http://localhost:4000/manage-services/update/${actionId}`;
+      url = `${apiUrl}/manage-services/update/${actionId}`;
       method = 'PUT';
     } else {
-      url = 'http://localhost:4000/manage-services/add';
+      url = `${apiUrl}/manage-services/add`;
       method = 'POST';
     }
 

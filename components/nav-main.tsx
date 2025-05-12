@@ -27,10 +27,7 @@ export function NavMain({
 
 
 
-  const EmpNo = sessionStorage.getItem("EmpNo")
-  const EmpName = sessionStorage.getItem("EmpName")
-  const EmpCompID = sessionStorage.getItem("EmpCompID")
-  const role = sessionStorage.getItem("role")
+
 
   return (
     <SidebarGroup>

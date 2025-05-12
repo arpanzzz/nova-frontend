@@ -25,6 +25,9 @@ type TransferEntry = {
   EnteredBy: string
 }
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+
 export default function AssetTransferTable() {
   const [transfers, setTransfers] = useState<TransferEntry[]>([])
   const [loading, setLoading] = useState(true)
@@ -34,7 +37,7 @@ export default function AssetTransferTable() {
     const fetchTransfers = async () => {
       try {
         const token = sessionStorage.getItem("token")
-        const response = await fetch("http://localhost:4000/transfer-asset-function/transfers-list", {
+        const response = await fetch(`${apiUrl}/transfer-asset-function/transfers-list`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

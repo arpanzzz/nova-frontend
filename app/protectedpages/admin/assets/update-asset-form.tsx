@@ -37,6 +37,8 @@ type AssetFormValues = {
   CurrentEmpNo: string | null;
 };
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const UpdateAssetForm = () => {
   const cookieData = Cookies.get('selected');
   const parsed = cookieData ? JSON.parse(cookieData) : {};
@@ -85,7 +87,7 @@ const UpdateAssetForm = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:4000/manage-asset/update-asset/${assetCode}`, {
+      const response = await fetch(`${apiUrl}/manage-asset/update-asset/${assetCode}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

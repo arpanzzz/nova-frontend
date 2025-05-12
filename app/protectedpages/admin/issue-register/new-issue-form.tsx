@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Command, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner"
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
 interface Employee {
@@ -63,16 +64,16 @@ export function NewIssueForm() {
   const [openEmpPopover, setOpenEmpPopover] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:4000/utils/get-employees")
+    fetch(`${apiUrl}/utils/get-employees`)
       .then((res) => res.json())
       .then((data) => setEmployees(data));
 
-    fetch("http://localhost:4000/utils/get-companies")
+    fetch(`${apiUrl}/utils/get-companies`)
       .then((res) => res.json())
       .then((data) => setCompanies(data));
 
     // Fetch free assets data
-    fetch("http://localhost:4000/utils/get-free-assets")
+    fetch(`${apiUrl}/utils/get-free-assets`)
       .then((res) => res.json())
       .then((data) => setAssets(data));
   }, []);
@@ -107,7 +108,7 @@ export function NewIssueForm() {
   
     // Prepare the POST request to send data to the backend
     try {
-      const response = await fetch("http://localhost:4000/manage-issue-register/add-issue", {
+      const response = await fetch(`${apiUrl}/manage-issue-register/add-issue`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

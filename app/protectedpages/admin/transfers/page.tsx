@@ -3,16 +3,15 @@
 import { useEffect, useState } from "react";
 import { getTransferColumns, Issue } from "./columns";
 import { DataTable } from "./data-table";
-import IssueRegisterModal from "./dialog-box"; // Modal for editing issues
 import Cookies from "js-cookie"; // Ensure this package is installed
-import IssueRegisterSection from "./issue-register-section";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function DemoPage() {
   const [data, setData] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterVersion, setFilterVersion] = useState(0);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [isAddModalOpen, setAddModalOpen] = useState(false);
+  // const [isModalOpen, setModalOpen] = useState(false);
+  // const [isAddModalOpen, setAddModalOpen] = useState(false);
 
   const fetchFilteredData = async () => {
     try {
@@ -39,7 +38,7 @@ export default function DemoPage() {
 
       console.log("Using Filters:", filters);
 
-      const response = await fetch("http://localhost:4000/transfer-asset-function/get-filtered-transfers-admin", {
+      const response = await fetch(`${apiUrl}/transfer-asset-function/get-filtered-transfers-admin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -121,10 +120,17 @@ export default function DemoPage() {
   return (
   
     <div className="container px-16 w-full mx-auto py-10 flex flex-col ">
-      <IssueRegisterSection  />
-      <DataTable columns={getTransferColumns()} data={data} />
-      <IssueRegisterModal  open={isModalOpen} onOpenChange={setModalOpen} />
-      <IssueRegisterModal  open={isAddModalOpen} onOpenChange={setAddModalOpen} />
+      <section className="w-full flex flex-col md:flex-row items-start md:items-center justify-between  px-4 gap-4">
+      <div>
+        <h1 className="text-xl font-bold mb-1">Transfer Register</h1>
+        <p className="text-sm text-muted-foreground">
+          Manage and track the assets transferred from employees or departments.
+        </p>
+      </div>
+      
+    </section>
+      <DataTable  data={data} />
+      
     </div>
   );
 }

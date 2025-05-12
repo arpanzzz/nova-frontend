@@ -6,6 +6,7 @@ import { DataTable } from "./data-table";
 import IssueRegisterModal from "./dialog-box"; // Modal for editing issues
 import Cookies from "js-cookie"; // Ensure this package is installed
 import IssueRegisterSection from "./issue-register-section";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function DemoPage() {
   const [data, setData] = useState<Issue[]>([]);
@@ -39,7 +40,7 @@ export default function DemoPage() {
 
       console.log("Using Filters:", filters);
 
-      const response = await fetch("http://localhost:4000/manage-issue-register/get-filtered-issues", {
+      const response = await fetch(`${apiUrl}/manage-issue-register/get-filtered-issues`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

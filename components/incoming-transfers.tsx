@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function IncomingTransfer() {
   const [data, setData] = useState([])
@@ -19,7 +20,7 @@ export default function IncomingTransfer() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch("http://localhost:4000/transfer-asset-function/pending-requests", {
+      const res = await fetch(`${apiUrl}/transfer-asset-function/pending-requests`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

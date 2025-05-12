@@ -15,6 +15,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+
 export default function TransferAssetForm() {
   const [formData, setFormData] = useState({
     from: "",
@@ -40,7 +43,7 @@ export default function TransferAssetForm() {
 
     const fetchAssets = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/utils/assets/${EmpCode}`, {
+        const res = await fetch(`${apiUrl}/utils/assets/${EmpCode}`, {
           // method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -58,7 +61,7 @@ export default function TransferAssetForm() {
 
     const fetchEmployees = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/utils/get-employees`, {
+        const res = await fetch(`${apiUrl}/utils/get-employees`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
