@@ -122,7 +122,7 @@ export default function DemoPage() {
 
   return (
   
-    <div className="container px-16 w-full mx-auto py-10 flex flex-col ">
+    <div className="container px-16 w-full mx-auto py-10 md:py-0.5 md:my-0 flex flex-col ">
       <AddAssetForm />
       <DataTable columns={getColumns} data={data} />
       <IssueRegisterModal  open={isModalOpen} onOpenChange={setModalOpen} />
