@@ -1,22 +1,33 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import { toast } from "sonner"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
+import { Check, ChevronsUpDown } from "lucide-react"
 
 export default function AddAssetForm({ onRefresh }: { onRefresh?: () => void }) {
   const [showForm, setShowForm] = useState(false)
+
+  const [companies, setCompanies] = useState<{ CompCode: string; CompName: string }[]>([])
+  const [employees, setEmployees] = useState<{ EmpNo: string; EmpName: string }[]>([])
+
+  const [openCompany, setOpenCompany] = useState(false)
+  const [openEmployee, setOpenEmployee] = useState(false)
+  const [openCurrentEmp, setOpenCurrentEmp] = useState(false)
 
   const [formData, setFormData] = useState({
     AssetCode: "",
@@ -26,6 +37,7 @@ export default function AddAssetForm({ onRefresh }: { onRefresh?: () => void }) 
     PurchaseDate: "",
     OwnerCompany: "",
     PurchaseEmployeeName: "",
+    currentEmpNo: "",
     PoNo: "",
     PoDate: "",
     PurchasedPrice: 0,
@@ -48,6 +60,23 @@ export default function AddAssetForm({ onRefresh }: { onRefresh?: () => void }) 
     Location: "",
   })
 
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      const res = await fetch("http://localhost:4000/utils/get-companies")
+      const data = await res.json()
+      setCompanies(data)
+    }
+
+    const fetchEmployees = async () => {
+      const res = await fetch("http://localhost:4000/utils/get-employees")
+      const data = await res.json()
+      setEmployees(data)
+    }
+
+    fetchCompanies()
+    fetchEmployees()
+  }, [])
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -57,27 +86,23 @@ export default function AddAssetForm({ onRefresh }: { onRefresh?: () => void }) 
     setFormData({ ...formData, [name]: parsedValue })
   }
 
-  const handleDateChange = (name: string, date: Date | undefined) => {
-    setFormData({
-      ...formData,
-      [name]: date ? format(date, "yyyy-MM-dd") : "",
-    })
+  const handleDateChange = (name: string, value: string) => {
+    setFormData({ ...formData, [name]: value })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const token = sessionStorage.getItem("token")
 
     try {
-      const res = await fetch(`${apiUrl}/manage-asset/add-asset`, {
+      const res = await fetch("http://localhost:4000/manage-asset/add-asset", {
         method: "POST",
         headers: {
+          "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       })
-
+      console.log(sessionStorage.getItem("token"))
       if (!res.ok) throw new Error("Failed to add asset")
 
       toast.success("Asset added successfully")
@@ -122,10 +147,53 @@ export default function AddAssetForm({ onRefresh }: { onRefresh?: () => void }) 
               const isNumber = typeof value === "number" && !isCheckbox
               const isDate = key.toLowerCase().includes("date")
 
+              if (key === "UserCompany" || key === "OwnerCompany") {
+                return (
+                  <div key={key} className="space-y-2 col-span-1">
+                    <Label htmlFor={key}>{key}</Label>
+                    <select
+                      name={key}
+                      id={key}
+                      value={value}
+                      onChange={handleChange}
+                      className="w-full border p-2 rounded"
+                    >
+                      <option value="">Select Company</option>
+                      {companies.map((company) => (
+                        <option key={company.CompCode.trim()} value={company.CompCode.trim()}>
+                          {company.CompName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )
+              }
+
+              if (key === "PurchaseEmployeeName" || key === "currentEmpNo") {
+                return (
+                  <div key={key} className="space-y-2 col-span-1">
+                    <Label htmlFor={key}>{key}</Label>
+                    <select
+                      name={key}
+                      id={key}
+                      value={value}
+                      onChange={handleChange}
+                      className="w-full border p-2 rounded"
+                    >
+                      <option value="">Select Employee</option>
+                      {employees.map((emp) => (
+                        <option key={emp.EmpNo} value={emp.EmpNo}>
+                          {emp.EmpName} ({emp.EmpNo})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )
+              }
+
               return (
                 <div key={key} className="space-y-2 col-span-1">
                   <Label htmlFor={key}>{key}</Label>
-
                   {isTextarea ? (
                     <Textarea
                       id={key}
@@ -143,27 +211,13 @@ export default function AddAssetForm({ onRefresh }: { onRefresh?: () => void }) 
                       onChange={handleChange}
                     />
                   ) : isDate ? (
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !value && "text-muted-foreground"
-                          )}
-                        >
-                          {value ? format(new Date(value), "PPP") : `Pick ${key.replace(/([A-Z])/g, " $1").trim()}`}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={value ? new Date(value) : undefined}
-                          onSelect={(date) => handleDateChange(key, date)}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <Input
+                      type="date"
+                      id={key}
+                      name={key}
+                      value={value}
+                      onChange={(e) => handleDateChange(key, e.target.value)}
+                    />
                   ) : (
                     <Input
                       type={isNumber ? "number" : "text"}

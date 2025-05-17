@@ -145,6 +145,8 @@ export const getTransferColumns = (): ColumnDef<Transfer>[] => [
       const transfer = row.original
 
       const handleApproval = async (status: number) => {
+
+        console.log("Transfer Code:", transfer)
         try {
           console.log("Sending approval request...");
       
@@ -186,10 +188,20 @@ export const getTransferColumns = (): ColumnDef<Transfer>[] => [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleApproval(1)}> Approve</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleApproval(0)} className="text-red-500">
-               Reject
-            </DropdownMenuItem>
+            {transfer.ApproveByTransTo === 1 ? (
+              <>
+                <DropdownMenuItem onClick={() => handleApproval(1)}>
+                  Approve
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleApproval(0)} className="text-red-500">
+                  Reject
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <DropdownMenuItem disabled>
+                You need transferee&apos;s approval first
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       )

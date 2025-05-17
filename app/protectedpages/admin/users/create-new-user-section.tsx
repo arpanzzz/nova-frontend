@@ -22,7 +22,7 @@ export default function CreateNewUser() {
         <Button
           className="bg-black hover:bg-zinc-800 text-white"
         >
-          <Link href="../../register-user" target="_blank">Create New User</Link>
+          <Link href="../../register" target="_blank">Create New User</Link>
         </Button>
       </div>
     </section>

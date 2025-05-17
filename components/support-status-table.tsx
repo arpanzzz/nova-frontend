@@ -11,80 +11,66 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-interface CallLogEntry {
-  Call_Id?: string
-  CallAssignTo?: string
-  AssetCode?: string
-  AssetType?: string
-  IssueType?: string
-  CallRegDate?: string
-  IssueDetails?: string
-  CallStatus?: string
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
+type SupportEntry = {
+  Call_Id: string
+  AssetCode: string
+  AssetType: string
+  CallRegDate: string
+  Empno: string
+  UserName: string
+  IssueType: string
+  IssueDetails: string
+  ResolveStatus: number | null
+  EscalationStatus: number | null
 }
 
 export default function SupportStatusTable() {
-  const [callLogs, setCallLogs] = useState<CallLogEntry[]>([])
+  const [entries, setEntries] = useState<SupportEntry[]>([])
   const [loading, setLoading] = useState(true)
-  const [statusFilter, setStatusFilter] = useState<string>("All")
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchCallLogs = async () => {
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const empNo = sessionStorage.getItem("EmpNo")?.slice(1, -1) || ""
       const token = sessionStorage.getItem("token")
-      if (!token) return
 
-      try {
-        const res = await fetch("http://localhost:4000/manage-call-log/call", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        const data = await res.json()
-        console.log("API Response: ", data)
-        if (Array.isArray(data)) {
-          setCallLogs(data)
-        } else {
-          console.error("Unexpected API response format", data)
-          setCallLogs([])
-        }
-      } catch (error) {
-        console.error("Failed to fetch call logs", error)
-        setCallLogs([])
-      } finally {
-        setLoading(false)
-      }
+      const res = await fetch(`${apiUrl}/manage-support/user-requests/${empNo}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!res.ok) throw new Error("Failed to fetch support calls")
+
+      const data = await res.json()
+      console.log("Support Calls Data:", data)
+      setEntries(data)
+    } catch (err: any) {
+      setError(err.message || "Something went wrong")
+    } finally {
+      setLoading(false)
     }
+  }
 
-    fetchCallLogs()
-    const interval = setInterval(fetchCallLogs, 30000) // refresh every 30 seconds
-    return () => clearInterval(interval)
-  }, [])
+  fetchData()
+}, [])
 
-  // Filtered logs based on selected status
-  const filteredLogs = statusFilter === "All"
-    ? callLogs
-    : callLogs.filter((entry) => entry.CallStatus === statusFilter)
+  const getStatus = (val: number | null): string => {
+    if (val == 1) return "Resolved"
+    if (val == 0) return "Unresolved"
+    return "Pending"
+  }
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-8 space-y-4">
       <div>
         <h3 className="text-lg font-semibold">Support Request Status</h3>
         <p className="text-sm text-muted-foreground">
-          Track the status of your submitted support queries.
+          View the progress of your submitted support calls.
         </p>
-      </div>
-
-      {/* Dropdown filter for Call Status */}
-      <div className="flex justify-end mb-2">
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border border-gray-300 rounded px-3 py-1 text-sm"
-        >
-          <option value="All">All</option>
-          <option value="Open">Open</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Resolved">Resolved</option>
-        </select>
       </div>
 
       <div className="overflow-x-auto">
@@ -93,54 +79,63 @@ export default function SupportStatusTable() {
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>
-                <TableHead>Assigned To</TableHead>
                 <TableHead>Asset Code</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Issue</TableHead>
+                <TableHead>Asset Type</TableHead>
+                <TableHead>Issue Type</TableHead>
+                <TableHead>Issue Details</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Escalated</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center">
+                  <TableCell colSpan={7} className="text-center py-4">
                     Loading...
                   </TableCell>
                 </TableRow>
-              ) : filteredLogs.length === 0 ? (
+              ) : error ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center">
-                    No support tickets found.
+                  <TableCell colSpan={7} className="text-center text-red-500 py-4">
+                    {error}
                   </TableCell>
                 </TableRow>
+              ) : entries.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-4">
+                    No support calls found.
+                  </TableCell>
+
+                </TableRow>
               ) : (
-                filteredLogs.map((entry) => (
+                entries.map((entry) => (
                   <TableRow key={entry.Call_Id}>
-                    <TableCell className="font-medium">{entry.Call_Id || "—"}</TableCell>
-                    <TableCell>{entry.CallAssignTo?.trim() || "—"}</TableCell>
-                    <TableCell>{entry.AssetCode?.trim() || "—"}</TableCell>
-                    <TableCell>{entry.AssetType || "—"}</TableCell>
-                    <TableCell>{entry.IssueType || "—"}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {entry.CallRegDate ? new Date(entry.CallRegDate).toLocaleDateString() : "—"}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {entry.IssueDetails || "—"}
-                    </TableCell>
+                    <TableCell>{entry.Call_Id}</TableCell>
+                    <TableCell>{entry.AssetCode}</TableCell>
+                    <TableCell>{entry.AssetType}</TableCell>
+                    <TableCell>{entry.IssueType}</TableCell>
+                    <TableCell>{entry.IssueDetails}</TableCell>
                     <TableCell>
                       <span
                         className={`text-xs font-medium px-2 py-1 rounded-full ${
-                          entry.CallStatus === "Open"
-                            ? "bg-gray-100 text-gray-700"
-                            : entry.CallStatus === "In Progress"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-green-100 text-green-700"
+                          getStatus(entry.ResolveStatus) === "Resolved"
+                            ? "bg-green-100 text-green-700"
+                            : getStatus(entry.ResolveStatus) === "Unresolved"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-yellow-100 text-yellow-700"
                         }`}
                       >
-                        {entry.CallStatus || "—"}
+                        {getStatus(entry.ResolveStatus)}
                       </span>
+                    </TableCell>
+                    <TableCell>
+                      {entry.EscalationStatus === 1 ? (
+                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-700">
+                          Escalated
+                        </span>
+                      ) : (
+                        "-"
+                      )}
                     </TableCell>
                   </TableRow>
                 ))

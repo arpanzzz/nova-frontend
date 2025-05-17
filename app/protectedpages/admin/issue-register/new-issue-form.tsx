@@ -7,6 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Command, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
@@ -177,9 +184,17 @@ export function NewIssueForm() {
 
         <div>
           <label className="block mb-1 text-sm text-gray-700">Issue Type</label>
-          <Input {...register("IssueType")} placeholder="e.g. Temporary" />
+          <Select onValueChange={(value) => setValue("IssueType", value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select issue type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Temporary">Temporary</SelectItem>
+              <SelectItem value="Permanent">Permanent</SelectItem>
+              <SelectItem value="Others">Others</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-
         <div>
           <label className="block mb-1 text-sm text-gray-700">Employee</label>
           <Popover open={openEmpPopover} onOpenChange={setOpenEmpPopover}>

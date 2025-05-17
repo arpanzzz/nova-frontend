@@ -104,9 +104,8 @@ export function IssueForm() {
     try {
       const { IssuedID, ...updateData } = data; // Remove IssuedID from the body as it's in the URL
   
-      // Ensure you have a valid token for authorization
-      // const token = Cookies.get("token"); // Assuming your token is stored in cookies
-      const token ="wdgygygygygygygyyw"
+  
+      const token = sessionStorage.getItem("token");
       if (!token) {
         return toast("You need to be logged in to update the issue record.");
       }

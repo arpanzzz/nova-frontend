@@ -2,9 +2,12 @@
 
 import * as React from "react"
 import {
+  IconAffiliate,
   IconAsset,
+  IconBuilding,
   IconFileCheck,
   IconFolder,
+  IconHelp,
   IconInnerShadowTop,
   IconSettings2,
   IconUser,
@@ -59,6 +62,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/protectedpages/asset-transfer",
         icon: IconAsset,
       },
+      {
+        title: "Get Support",
+        url: "/protectedpages/support",
+        icon: IconHelp,
+      },
     ],
     admin: [
       {
@@ -85,6 +93,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         name: "Services",
         url: "/protectedpages/admin/services",
         icon: IconSettings2,
+      },
+      {
+        name: "Manage Support",
+        url: "/protectedpages/admin/manage-support",
+        icon: IconAffiliate,
+      },
+       {
+        name: "Manage companies",
+        url: "/protectedpages/admin/manage-companies",
+        icon: IconBuilding,
       },
     ],
   }

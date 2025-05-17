@@ -3,10 +3,24 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { Card } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function IncomingTransfer() {
@@ -26,9 +40,17 @@ export default function IncomingTransfer() {
         },
       })
       const json = await res.json()
-      setData(json)
+      if (Array.isArray(json)) {
+        setData(json)
+      } else if (Array.isArray(json?.data)) {
+        setData(json.data)
+      } else {
+        toast.error("Unexpected response format")
+        setData([])
+      }
     } catch (err) {
       toast.error("Failed to fetch asset transfer data")
+      setData([])
     }
   }
 
@@ -78,12 +100,8 @@ export default function IncomingTransfer() {
       toast.error(`An error occurred during ${isApproved ? "approval" : "rejection"}`)
     }
   }
-  if (!data || data.length === 0) {
-    return <div className="text-center text-sm text-muted-foreground py-2">No incoming transfer found.</div>;
-  }
 
   return (
-
     <div className="w-full max-w-5xl mx-auto px-4 py-8 space-y-4">
       <div>
         <h3 className="text-lg font-semibold">Pending Asset Transfers</h3>
@@ -103,20 +121,28 @@ export default function IncomingTransfer() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.map((entry) => (
-                <TableRow key={entry.TransferCode}>
-                  <TableCell>{entry.TransferCode.trim()}</TableCell>
-                  <TableCell>{entry.AssetCode.trim()}</TableCell>
-                  <TableCell>{entry.AssetDesc.trim()}</TableCell>
-                  <TableCell>{entry.TransferFrom.trim()}</TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button variant="outline" onClick={() => handleApprove(entry.TransferCode)}>Approve</Button>
-                      <Button  className="black" onClick={() => handleReject(entry.TransferCode)}>Reject</Button>
-                    </div>
+              {Array.isArray(data) && data.length > 0 ? (
+                data.map((entry) => (
+                  <TableRow key={entry.TransferCode}>
+                    <TableCell>{entry.TransferCode?.trim?.()}</TableCell>
+                    <TableCell>{entry.AssetCode?.trim?.()}</TableCell>
+                    <TableCell>{entry.AssetDesc?.trim?.()}</TableCell>
+                    <TableCell>{entry.TransferFrom?.trim?.()}</TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button variant="outline" onClick={() => handleApprove(entry.TransferCode)}>Approve</Button>
+                        <Button className="black" onClick={() => handleReject(entry.TransferCode)}>Reject</Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-muted-foreground">
+                    No incoming transfer found.
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </Card>
